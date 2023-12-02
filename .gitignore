@@ -3,3 +3,4 @@ scrape/
 types/
 .idea/
 main.py
+settings.json
