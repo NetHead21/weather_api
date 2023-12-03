@@ -4,10 +4,12 @@ from infrastructure import weather_cache
 
 from models.validatiaon_error import ValidationError
 
+from utils.format_data import format_value
+
 api_key: Optional[str] = None
 
 
-async def get_report(
+async def get_report_async(
     city: str, state: Optional[str], country: Optional[str], units: str
 ) -> str:
     city, state, country, units = validate_units(city, state, country, units)
@@ -48,34 +50,6 @@ def validate_length(field_name: str, value: str, length: int) -> str:
     return value
 
 
-# def validate_units(
-#     city: str, state: Optional[str], country: Optional[str], units: str
-# ) -> Tuple[str, Optional[str], str, str]:  # 60
-#     city = city.lower().strip()
-
-#     country = country.lower().strip() if country else "us"
-#     if len(country) != 2:
-#         error = f"Invalid country: {country}. It must be a two letter abbreviation such as US or GB."
-#         raise ValidationError(status_code=400, error_msg=error)
-
-#     if state:
-#         state = state.strip().lower()
-
-#     if state and len(state) != 2:
-#         error = f"Invalid state: {state}. It must be a two letter abbreviation such as CA or KS (use for US only)."
-#         raise ValidationError(status_code=400, error_msg=error)
-
-#     if units:
-#         units = units.strip().lower()
-
-#     valid_units = {"standard", "metric", "imperial"}
-#     if units not in valid_units:
-#         error = f"Invalid units '{units}', it must be one of {valid_units}."
-#         raise ValidationError(status_code=400, error_msg=error)
-
-#     return city, state, country, units
-
-
 def validate_units(
     city: str,
     state: Optional[str],
@@ -83,10 +57,10 @@ def validate_units(
     units: str,
 ) -> Tuple[str, Optional[str], str, str]:
     fields = {
-        "city": city.lower().strip(),
-        "country": country.lower().strip(),
-        "state": state.strip().lower() if state else None,
-        "units": units.strip().lower(),
+        "city": format_value(city),
+        "country": format_value(country),
+        "state": format_value(state),
+        "units": format_value(units),
     }
 
     validate_length("country", fields["country"], 2)
